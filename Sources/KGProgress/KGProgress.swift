@@ -12,6 +12,7 @@ import UIKit
 public class KGProgress {
     
     fileprivate var progressView: ProgressView?
+    fileprivate var blanketView: BlanketView?
     fileprivate var property: Property?
     
     public var isAvailable: Bool = false
@@ -48,46 +49,97 @@ extension KGProgress {
 // MARK: Use addSubView
 extension KGProgress {
     
-    public func showAtRatio(frame: CGRect, display: Bool = true, message: String = "", style: StyleProperty = Style()) -> UIView? {
+    public func showAtRatio(frame: CGRect,
+                            display: Bool = true,
+                            message: String? = nil,
+                            view: UIView,
+                            style: StyleProperty = Style()) {
         if isAvailable {
-            return nil
+            return
         }
         isAvailable = true
         property = Property(style: style)
         
-        progressView = ProgressView(frame: frame)
-        
-        guard let v = progressView else {
-            return nil
+        if style.hasBlanket {
+            //get blanket and call progress view there
+            blanketView = BlanketView(frame: CGRect(origin: .zero,
+                                                    size: CGSize(width: view.bounds.width,
+                                                                 height: view.bounds.height)),
+                                      style: style)
+            
+            guard let b = blanketView else {
+                return
+            }
+            
+            let progressView = createProgressViewWithRatio(frame: frame, display: display, message: message, style: style)
+            
+            guard let pv = progressView else {
+                return
+            }
+            
+            view.addSubview(b)
+            view.addSubview(pv)
+            view.bringSubview(toFront: pv)
+        } else {
+            let progressView = createProgressViewWithRatio(frame: frame, display: display, message: message, style: style)
+            guard let pv = progressView else {
+                return
+            }
+            view.addSubview(pv)
         }
-        
-        v.arc(display, message: message, style: style)
-        
-        return v
     }
     
-    public func show(frame: CGRect, style: StyleProperty = Style()) -> UIView? {
+    public func show(frame: CGRect,
+                     message: String?,
+                     view: UIView,
+                     style: StyleProperty = Style()) {
         if isAvailable {
-            return nil
+            return
         }
         isAvailable = true
         property = Property(style: style)
         
-        return getProgress(frame: frame, message: nil, style: style)
+        setProgress(frame: frame,
+                    message: message,
+                    view: view,
+                    style: style)
     }
     
-    public func show(frame: CGRect, message: String, style: StyleProperty = Style()) -> UIView? {
-        if isAvailable {
-            return nil
+    private func setProgress(frame: CGRect,
+                             message: String?,
+                             view: UIView,
+                             style: StyleProperty) {
+        
+        if style.hasBlanket {
+            //get blanket and call progress view there
+            blanketView = BlanketView(frame: CGRect(origin: .zero,
+                                                    size: CGSize(width: UIScreen.main.bounds.width,
+                                                                 height: UIScreen.main.bounds.height)),
+                                      style: style)
+            
+            guard let b = blanketView else {
+                return
+            }
+            
+            let progressView = createProgressView(frame: frame, message: message, style: style)
+            
+            guard let pv = progressView else {
+                return
+            }
+            
+            view.addSubview(b)
+            view.addSubview(pv)
+            view.bringSubview(toFront: pv)
+        } else {
+            let progressView = createProgressView(frame: frame, message: message, style: style)
+            guard let pv = progressView else {
+                return
+            }
+            view.addSubview(pv)
         }
-        isAvailable = true
-        property = Property(style: style)
-        
-        return getProgress(frame: frame, message: message, style: style)
     }
     
-    private func getProgress(frame: CGRect, message: String?, style: StyleProperty) -> UIView? {
-        
+    private func createProgressView(frame: CGRect, message: String?, style: StyleProperty) -> UIView? {
         progressView = ProgressView(frame: frame)
         
         guard let v = progressView else {
@@ -95,6 +147,18 @@ extension KGProgress {
         }
         
         v.circle(message, style: style)
+        
+        return v
+    }
+    
+    private func createProgressViewWithRatio(frame: CGRect, display: Bool, message: String?, style: StyleProperty) -> UIView? {
+        progressView = ProgressView(frame: frame)
+        
+        guard let v = progressView else {
+            return nil
+        }
+        
+        v.arc(display, message: message, style: style)
         
         return v
     }

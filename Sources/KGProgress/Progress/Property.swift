@@ -37,6 +37,11 @@ public protocol StyleProperty {
     var backgroundShadowOffset: CGSize? { get set }
     var backgroundShadowRadius: CGFloat? { get set }
     
+    //Blanket
+    var hasBlanket: Bool { get set }
+    var blanketOpacity: CGFloat? { get set }
+    var blanketColor: UIColor? { get set }
+    
     // Dismiss
     var dismissTimeInterval: Double? { get set }
     
@@ -83,6 +88,11 @@ internal struct Property {
     let backgroundShadowOffset: CGSize?
     let backgroundShadowRadius: CGFloat?
     
+    //Blanket
+    let hasBlanket: Bool
+    let blanketOpacity: CGFloat?
+    let blanketColor: UIColor?
+    
     // Dismiss
     let dismissTimeInterval: Double?
     
@@ -114,6 +124,9 @@ internal struct Property {
         backgroundShadowOpacity = styles.backgroundShadowOpacity ?? 0.2
         backgroundShadowOffset = styles.backgroundShadowOffset ?? CGSize(width: 0, height: 2)
         backgroundShadowRadius = styles.backgroundShadowRadius ?? 5.0
+        hasBlanket = styles.hasBlanket
+        blanketOpacity = styles.blanketOpacity ?? 0.5
+        blanketColor = styles.blanketColor ?? .black
         dismissTimeInterval   = styles.dismissTimeInterval    ?? 0.8
     }
 }

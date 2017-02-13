@@ -35,7 +35,6 @@ class ProgressView: UIView {
             
             messageLabel.attributedText = attributedString
             messageLabel.sizeToFit()
-            messageLabel.backgroundColor = UIColor.orange
             
             if centerPoint == nil {
                 centerPoint = center
@@ -117,7 +116,7 @@ class ProgressView: UIView {
             showMessage(message)
             progressAtRatioView.frame = CGRect(
                 x: (frame.size.width - progressAtRatioView.frame.size.width) / 2,
-                y: (frame.size.height/3 - progressAtRatioView.frame.size.height/2),
+                y: (frame.size.height*2/5 - progressAtRatioView.frame.size.height/2),
                 width: progressAtRatioView.frame.size.width,
                 height: progressAtRatioView.frame.size.height)
         } else {
@@ -158,7 +157,7 @@ class ProgressView: UIView {
             showMessage(message)
             circularProgressView.frame = CGRect(
                 x: (frame.size.width - circularProgressView.frame.size.width) / 2,
-                y: (frame.size.height/3 - circularProgressView.frame.size.height/2),
+                y: (frame.size.height*2/5 - circularProgressView.frame.size.height/2),
                 width: circularProgressView.frame.size.width,
                 height: circularProgressView.frame.size.height)
         } else {
@@ -191,15 +190,15 @@ class ProgressView: UIView {
     
     private func getBlurView() {
         
-        guard let rect = viewRect, let prop = prop else {
+        guard let _ = viewRect, let prop = prop else {
             return
         }
         
-        blurView = Background().blurEffectView(frame: rect)
+//        blurView = Background().blurEffectView(frame: rect)
         
-        guard let blurView = blurView else {
-            return
-        }
+//        guard let blurView = blurView else {
+//            return
+//        }
         
         self.backgroundColor = prop.backgroundColor!
         layer.cornerRadius = prop.backgroundCornerRadius!
@@ -210,6 +209,7 @@ class ProgressView: UIView {
             layer.shadowRadius = prop.backgroundShadowRadius!
             layer.shadowOpacity = Float(prop.backgroundShadowOpacity!)
         }
-        addSubview(blurView)
+//        blurView.backgroundColor = .red
+//        addSubview(blurView)
     }
 }
