@@ -163,24 +163,44 @@ extension KGProgress {
         return v
     }
     
-    public func dismiss(progress view: UIView) {
+    public func dismiss() {
         if !isAvailable {
             return
         }
         
         guard let prop = property else {
+            return
+        }
+        
+        if prop.hasBlanket {
+            self.blanketView?.removeFromSuperview()
+        }
+        
+        guard let view = self.progressView else {
+            self.property = nil
+            isAvailable = false
             return
         }
         
         cleanup(prop.dismissTimeInterval!, view: view, completionHandler: nil)
     }
     
-    public func dismiss(progress view: UIView, completionHandler: @escaping () -> Void) -> () {
+    public func dismiss(completionHandler: @escaping () -> Void) -> () {
         if !isAvailable {
             return
         }
         
         guard let prop = property else {
+            return
+        }
+        
+        if prop.hasBlanket {
+            self.blanketView?.removeFromSuperview()
+        }
+        
+        guard let view = self.progressView else {
+            self.property = nil
+            isAvailable = false
             return
         }
         
