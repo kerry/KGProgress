@@ -3,7 +3,7 @@ platform :ios, '8.0'
 target '<Your Target Name>' do
     use_frameworks!
     
-    pod 'KGProgress', :git => 'https://github.com/kerry/KGProgress', :branch => 'develop'
+    pod 'KGProgress', :git => 'https://github.com/kerry/KGProgress.git'
     
     post_install do |installer|
         installer.pods_project.targets.each do |target|
