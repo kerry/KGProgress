@@ -20,7 +20,7 @@ class CircularProgressView: UIView {
             animation.repeatCount = HUGE
             animation.fromValue = NSNumber(value: 0.0)
             animation.toValue = NSNumber(value: 2 * Float(M_PI))
-            
+            animation.isRemovedOnCompletion = false 
             return animation
         }
         
