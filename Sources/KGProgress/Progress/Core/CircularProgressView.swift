@@ -40,6 +40,7 @@ class CircularProgressView: UIView {
         
         backgroundColor = UIColor.clear
         layer.masksToBounds = true
+        translatesAutoresizingMaskIntoConstraints = false
         
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(viewDidEnterBackground(_:)),

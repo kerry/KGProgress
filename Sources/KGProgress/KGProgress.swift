@@ -49,8 +49,7 @@ extension KGProgress {
 // MARK: Use addSubView
 extension KGProgress {
     
-    public func showAtRatio(frame: CGRect,
-                            display: Bool = true,
+    public func showAtRatio(display: Bool = true,
                             message: String? = nil,
                             view: UIView,
                             style: StyleProperty = Style()) {
@@ -62,35 +61,28 @@ extension KGProgress {
         
         if style.hasBlanket {
             //get blanket and call progress view there
-            blanketView = BlanketView(frame: CGRect(origin: .zero,
-                                                    size: CGSize(width: view.bounds.width,
-                                                                 height: view.bounds.height)),
+            blanketView = BlanketView(view: view,
                                       style: style)
             
             guard let b = blanketView else {
                 return
             }
             
-            let progressView = createProgressViewWithRatio(frame: frame, display: display, message: message, style: style)
+            createProgressViewWithRatio(view: view,
+                                       display: display,
+                                       message: message,
+                                       style: style)
             
-            guard let pv = progressView else {
-                return
-            }
-            
-            view.addSubview(b)
-            view.addSubview(pv)
-            view.bringSubview(toFront: pv)
         } else {
-            let progressView = createProgressViewWithRatio(frame: frame, display: display, message: message, style: style)
-            guard let pv = progressView else {
-                return
-            }
-            view.addSubview(pv)
+            createProgressViewWithRatio(view: view,
+                                        display: display,
+                                        message: message,
+                                        style: style)
+            
         }
     }
     
-    public func show(frame: CGRect,
-                     message: String?,
+    public func show(message: String?,
                      view: UIView,
                      style: StyleProperty = Style()) {
         if isAvailable {
@@ -99,68 +91,53 @@ extension KGProgress {
         isAvailable = true
         property = Property(style: style)
         
-        setProgress(frame: frame,
-                    message: message,
+        setProgress(message: message,
                     view: view,
                     style: style)
     }
     
-    private func setProgress(frame: CGRect,
-                             message: String?,
+    private func setProgress(message: String?,
                              view: UIView,
                              style: StyleProperty) {
         
         if style.hasBlanket {
             //get blanket and call progress view there
-            blanketView = BlanketView(frame: CGRect(origin: .zero,
-                                                    size: CGSize(width: UIScreen.main.bounds.width,
-                                                                 height: UIScreen.main.bounds.height)),
+            blanketView = BlanketView(view: view,
                                       style: style)
             
             guard let b = blanketView else {
                 return
             }
             
-            let progressView = createProgressView(frame: frame, message: message, style: style)
+            createProgressView(view: view,
+                               message: message,
+                               style: style)
             
-            guard let pv = progressView else {
-                return
-            }
-            
-            view.addSubview(b)
-            view.addSubview(pv)
-            view.bringSubview(toFront: pv)
         } else {
-            let progressView = createProgressView(frame: frame, message: message, style: style)
-            guard let pv = progressView else {
-                return
-            }
-            view.addSubview(pv)
+            createProgressView(view: view,
+                               message: message,
+                               style: style)
         }
     }
     
-    private func createProgressView(frame: CGRect, message: String?, style: StyleProperty) -> UIView? {
-        progressView = ProgressView(frame: frame)
+    private func createProgressView(view: UIView, message: String?, style: StyleProperty) {
+        progressView = ProgressView(view: view, size: style.containerSize)
         
         guard let v = progressView else {
-            return nil
+            return
         }
         
         v.circle(message, style: style)
-        
-        return v
     }
     
-    private func createProgressViewWithRatio(frame: CGRect, display: Bool, message: String?, style: StyleProperty) -> UIView? {
-        progressView = ProgressView(frame: frame)
+    private func createProgressViewWithRatio(view: UIView, display: Bool, message: String?, style: StyleProperty) {
+        progressView = ProgressView(view: view, size: style.containerSize)
         
         guard let v = progressView else {
-            return nil
+            return
         }
         
         v.arc(display, message: message, style: style)
-        
-        return v
     }
     
     public func dismiss() {
@@ -194,10 +171,6 @@ extension KGProgress {
             return
         }
         
-        if prop.hasBlanket {
-            self.blanketView?.removeFromSuperview()
-        }
-        
         guard let view = self.progressView else {
             self.property = nil
             isAvailable = false
@@ -218,9 +191,10 @@ extension KGProgress {
                 withDuration: 0.3,
                 animations: {
                     view.alpha = 0
-                },
+            },
                 completion: { [weak self] finished in
                     view.removeFromSuperview()
+                    self?.blanketView?.removeFromSuperview()
                     self?.property = nil
                     self?.isAvailable = false
                     guard let completionHandler = completionHandler else {

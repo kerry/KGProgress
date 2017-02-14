@@ -8,6 +8,7 @@ import UIKit
 
 public protocol StyleProperty {
     // Progress Size
+    var containerSize: CGSize { get set }
     var progressSize: CGFloat { get set }
     
     // Gradient Circular
@@ -59,6 +60,7 @@ internal struct Property {
     let arcLineCapStyle: CGLineCap = CGLineCap.butt
     
     // Progress Size
+    var containerSize: CGSize
     var progressSize: CGFloat
     
     // Gradient Circular
@@ -106,6 +108,7 @@ internal struct Property {
         
         let styles: StyleProperty = style
         
+        containerSize         = styles.containerSize
         progressSize          = styles.progressSize
         arcLineWidth          = styles.arcLineWidth
         startArcColor         = styles.startArcColor

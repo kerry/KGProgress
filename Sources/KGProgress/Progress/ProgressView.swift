@@ -9,13 +9,10 @@ import UIKit
 
 class ProgressView: UIView {
     
-    private var viewRect: CGRect?
-    private var blurView: UIView?
     private var progressAtRatioView: ProgressAtRatioView?
     private var circularProgressView: CircularProgressView?
     internal var prop: Property?
     var messageLabel = UILabel()
-    var centerPoint: CGPoint?
     
     var message: String? {
         willSet {
@@ -35,14 +32,6 @@ class ProgressView: UIView {
             
             messageLabel.attributedText = attributedString
             messageLabel.sizeToFit()
-            
-            if centerPoint == nil {
-                centerPoint = center
-            }
-            
-            if let center = centerPoint {
-                messageLabel.center = center
-            }
         }
     }
     
@@ -57,6 +46,7 @@ class ProgressView: UIView {
         messageLabel.textAlignment = NSTextAlignment.center
         messageLabel.textColor = prop.messageLabelFontColor
         messageLabel.numberOfLines = 0
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(messageLabel)
         
@@ -70,19 +60,54 @@ class ProgressView: UIView {
         }
     }
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        initialize(frame: frame)
+    init(view: UIView, size: CGSize) {
+        super.init(frame: view.frame)
+        translatesAutoresizingMaskIntoConstraints = false
+        initialize(view: view, size: size)
     }
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)!
     }
     
-    private func initialize(frame: CGRect) {
-        viewRect = CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height)
+    private func initialize(view: UIView, size: CGSize) {
         clipsToBounds = true
+        view.addSubview(self)
+        self.setViewConstraints(view: view, size: size)
+    }
+    
+    func setViewConstraints(view: UIView, size: CGSize) {
+        let hConstraint = NSLayoutConstraint.init(item: self,
+                                                  attribute: .centerX,
+                                                  relatedBy: .equal,
+                                                  toItem: view,
+                                                  attribute: .centerX,
+                                                  multiplier: 1.0,
+                                                  constant: 0.0)
+        let vConstraint = NSLayoutConstraint.init(item: self,
+                                                  attribute: .centerY,
+                                                  relatedBy: .equal,
+                                                  toItem: view,
+                                                  attribute: .centerY,
+                                                  multiplier: 1.0,
+                                                  constant: 0.0)
+        
+        let heightConstraint = NSLayoutConstraint.init(item: self,
+                                                       attribute: .height,
+                                                       relatedBy: .equal,
+                                                       toItem: nil,
+                                                       attribute: .notAnAttribute,
+                                                       multiplier: 1.0,
+                                                       constant: size.height)
+        
+        let widthConstraint = NSLayoutConstraint.init(item: self,
+                                                       attribute: .width,
+                                                       relatedBy: .equal,
+                                                       toItem: nil,
+                                                       attribute: .notAnAttribute,
+                                                       multiplier: 1.0,
+                                                       constant: size.width)
+        view.addConstraints([hConstraint, vConstraint, heightConstraint, widthConstraint])
     }
     
     internal func arc(_ display: Bool, message: String?, style: StyleProperty) {
@@ -93,10 +118,9 @@ class ProgressView: UIView {
             return
         }
         
-//        isUserInteractionEnabled = !(prop.backgroundStyle.hashValue == 0) ? true : false
         isUserInteractionEnabled = false
         
-        getBlurView()
+        setContainerView()
         
         progressAtRatioView = ProgressAtRatioView(frame: CGRect(x: 0, y: 0, width: prop.progressSize, height: prop.progressSize))
         
@@ -112,19 +136,11 @@ class ProgressView: UIView {
         }
         
         if prop.hasMessage, let message = message {
-            self.centerPoint = CGPoint(x: frame.size.width/2, y: frame.size.height*3/4)
             showMessage(message)
-            progressAtRatioView.frame = CGRect(
-                x: (frame.size.width - progressAtRatioView.frame.size.width) / 2,
-                y: (frame.size.height*2/5 - progressAtRatioView.frame.size.height/2),
-                width: progressAtRatioView.frame.size.width,
-                height: progressAtRatioView.frame.size.height)
+            self.setProgressCircleConstraints(view: progressAtRatioView, style: style, yMultiplier: 4.0/5.0)
+            self.setMessageLabelConstraints(view: progressAtRatioView)
         } else {
-            progressAtRatioView.frame = CGRect(
-                x: (frame.size.width - progressAtRatioView.frame.size.width) / 2,
-                y: (frame.size.height - progressAtRatioView.frame.size.height) / 2,
-                width: progressAtRatioView.frame.size.width,
-                height: progressAtRatioView.frame.size.height)
+            self.setProgressCircleConstraints(view: progressAtRatioView, style: style, yMultiplier: 1.0)
         }
         
         addSubview(progressAtRatioView)
@@ -138,10 +154,9 @@ class ProgressView: UIView {
             return
         }
         
-//        isUserInteractionEnabled = !(prop.backgroundStyle.hashValue == 0) ? true : false
         isUserInteractionEnabled = false
         
-        getBlurView()
+        setContainerView()
         
         circularProgressView = CircularProgressView(frame: CGRect(x: 0, y: 0, width: prop.progressSize, height: prop.progressSize))
         
@@ -151,24 +166,64 @@ class ProgressView: UIView {
         
         circularProgressView.prop = prop
         circularProgressView.initialize(frame: circularProgressView.frame)
-        
-        if prop.hasMessage, let message = message {
-            self.centerPoint = CGPoint(x: frame.size.width/2, y: frame.size.height*3/4)
-            showMessage(message)
-            circularProgressView.frame = CGRect(
-                x: (frame.size.width - circularProgressView.frame.size.width) / 2,
-                y: (frame.size.height*2/5 - circularProgressView.frame.size.height/2),
-                width: circularProgressView.frame.size.width,
-                height: circularProgressView.frame.size.height)
-        } else {
-            circularProgressView.frame = CGRect(
-                x: (frame.size.width - circularProgressView.frame.size.width) / 2,
-                y: (frame.size.height - circularProgressView.frame.size.height) / 2,
-                width: circularProgressView.frame.size.width,
-                height: circularProgressView.frame.size.height)
-        }
-        
         addSubview(circularProgressView)
+
+        if prop.hasMessage, let message = message {
+            showMessage(message)
+            self.setProgressCircleConstraints(view: circularProgressView, style: style, yMultiplier: 4.0/5.0)
+            self.setMessageLabelConstraints(view: circularProgressView)
+        } else {
+            self.setProgressCircleConstraints(view: circularProgressView, style: style, yMultiplier: 1.0)
+        }
+    }
+    
+    func setMessageLabelConstraints(view: UIView) {
+        let hConstraint = NSLayoutConstraint.init(item: messageLabel,
+                                              attribute: .centerX,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerX,
+                                              multiplier: 1.0,
+                                              constant: 0.0)
+        let vConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:[view]-20-[messageLabel]",
+                                                          options: .directionLeftToRight,
+                                                          metrics: nil,
+                                                          views: ["view": view, "messageLabel": messageLabel])
+        addConstraint(hConstraint)
+        addConstraints(vConstraints)
+    }
+    
+    func setProgressCircleConstraints(view: UIView, style: StyleProperty, yMultiplier: CGFloat) {
+        let hConstraint = NSLayoutConstraint.init(item: view,
+                                                  attribute: .centerX,
+                                                  relatedBy: .equal,
+                                                  toItem: self,
+                                                  attribute: .centerX,
+                                                  multiplier: 1.0,
+                                                  constant: 0.0)
+        let vConstraint = NSLayoutConstraint.init(item: view,
+                                                  attribute: .centerY,
+                                                  relatedBy: .equal,
+                                                  toItem: self,
+                                                  attribute: .centerY,
+                                                  multiplier: yMultiplier,
+                                                  constant: 0.0)
+        let heightConstraint = NSLayoutConstraint.init(item: view,
+                                                       attribute: .height,
+                                                       relatedBy: .equal,
+                                                       toItem: nil,
+                                                       attribute: .notAnAttribute,
+                                                       multiplier: 1.0,
+                                                       constant: style.progressSize)
+        let widthConstraint = NSLayoutConstraint.init(item: view,
+                                                      attribute: .width,
+                                                      relatedBy: .equal,
+                                                      toItem: nil,
+                                                      attribute: .notAnAttribute,
+                                                      multiplier: 1.0,
+                                                      constant: style.progressSize)
+        
+        addConstraints([hConstraint, vConstraint, heightConstraint, widthConstraint])
     }
     
     internal func updateMessage(_ message: String) {
@@ -188,18 +243,11 @@ class ProgressView: UIView {
         self.message = message
     }
     
-    private func getBlurView() {
+    private func setContainerView() {
         
-        guard let _ = viewRect, let prop = prop else {
+        guard let prop = prop else {
             return
         }
-        
-//        blurView = Background().blurEffectView(frame: rect)
-        
-//        guard let blurView = blurView else {
-//            return
-//        }
-        
         self.backgroundColor = prop.backgroundColor!
         layer.cornerRadius = prop.backgroundCornerRadius!
         
@@ -209,7 +257,5 @@ class ProgressView: UIView {
             layer.shadowRadius = prop.backgroundShadowRadius!
             layer.shadowOpacity = Float(prop.backgroundShadowOpacity!)
         }
-//        blurView.backgroundColor = .red
-//        addSubview(blurView)
     }
 }

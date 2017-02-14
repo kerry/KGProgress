@@ -9,6 +9,7 @@ import UIKit
 
 public struct Style: StyleProperty {
     // Progress Size
+    public var containerSize: CGSize = CGSize(width: 150, height: 150)
     public var progressSize: CGFloat = 44
     
     // Gradient Circular

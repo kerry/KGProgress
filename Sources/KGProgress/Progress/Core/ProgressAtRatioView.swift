@@ -21,7 +21,7 @@ class ProgressAtRatioView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = UIColor.clear
         layer.masksToBounds = true
     }
@@ -99,13 +99,32 @@ class ProgressAtRatioView: UIView {
         }
         
         // Progress Ratio
-        ratioLabel.text = "          "
+        ratioLabel.text = ""
         ratioLabel.font = prop.ratioLabelFont
         ratioLabel.textAlignment = NSTextAlignment.right
         ratioLabel.textColor = prop.ratioLabelFontColor
         ratioLabel.sizeToFit()
-        ratioLabel.center = center
+        ratioLabel.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(ratioLabel)
+        self.setRatioLabelConstraints()
+    }
+    
+    func setRatioLabelConstraints() {
+        let hConstraint = NSLayoutConstraint.init(item: ratioLabel,
+                                                  attribute: .centerX,
+                                                  relatedBy: .equal,
+                                                  toItem: self,
+                                                  attribute: .centerX,
+                                                  multiplier: 1.0,
+                                                  constant: 0.0)
+        let vConstraint = NSLayoutConstraint.init(item: ratioLabel,
+                                                  attribute: .centerY,
+                                                  relatedBy: .equal,
+                                                  toItem: self,
+                                                  attribute: .centerY,
+                                                  multiplier: 1.0,
+                                                  constant: 0.0)
+        addConstraints([hConstraint, vConstraint])
     }
 }
