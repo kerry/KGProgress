@@ -64,7 +64,7 @@ extension KGProgress {
             blanketView = BlanketView(view: view,
                                       style: style)
             
-            guard let b = blanketView else {
+            guard let _ = blanketView else {
                 return
             }
             
@@ -105,7 +105,7 @@ extension KGProgress {
             blanketView = BlanketView(view: view,
                                       style: style)
             
-            guard let b = blanketView else {
+            guard let _ = blanketView else {
                 return
             }
             
@@ -147,10 +147,6 @@ extension KGProgress {
         
         guard let prop = property else {
             return
-        }
-        
-        if prop.hasBlanket {
-            self.blanketView?.removeFromSuperview()
         }
         
         guard let view = self.progressView else {
