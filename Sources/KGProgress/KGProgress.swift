@@ -191,6 +191,7 @@ extension KGProgress {
                 withDuration: 0.3,
                 animations: {
                     view.alpha = 0
+                    self.blanketView?.alpha = 0
             },
                 completion: { [weak self] finished in
                     view.removeFromSuperview()
