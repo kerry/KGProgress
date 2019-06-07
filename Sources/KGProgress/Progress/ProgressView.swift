@@ -27,8 +27,8 @@ class ProgressView: UIView {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineHeightMultiple = 1.2
             paragraphStyle.alignment = NSTextAlignment.center
-            let attr = [NSParagraphStyleAttributeName: paragraphStyle]
-            let attributedString = NSMutableAttributedString(string: message, attributes: attr)
+            let attr = [kCTParagraphStyleAttributeName: paragraphStyle]
+            let attributedString = NSMutableAttributedString(string: message, attributes: attr as [NSAttributedString.Key : Any])
             
             messageLabel.attributedText = attributedString
             messageLabel.sizeToFit()

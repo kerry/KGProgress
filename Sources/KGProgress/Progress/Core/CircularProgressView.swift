@@ -19,7 +19,7 @@ class CircularProgressView: UIView {
             animation.duration = 0.8
             animation.repeatCount = HUGE
             animation.fromValue = NSNumber(value: 0.0)
-            animation.toValue = NSNumber(value: 2 * Float(M_PI))
+            animation.toValue = NSNumber(value: 2 * Float(Double.pi))
             animation.isRemovedOnCompletion = false 
             return animation
         }
@@ -44,11 +44,11 @@ class CircularProgressView: UIView {
         
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(viewDidEnterBackground(_:)),
-                                               name: .UIApplicationDidEnterBackground,
+                                               name: UIApplication.didEnterBackgroundNotification,
                                                object: nil)
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(viewWillEnterForeground(_:)),
-                                               name: .UIApplicationWillEnterForeground,
+                                               name: UIApplication.willEnterForegroundNotification,
                                                object: nil)
     }
     

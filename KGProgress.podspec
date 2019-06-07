@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "KGProgress"
-  s.version = "0.1.4"
+  s.version = "0.1.5"
   s.summary = "Customizable progress indicator library in Swift"
   s.homepage = "https://github.com/kerry/KGProgress"
   s.license = { :type => "MIT", :file => "LICENSE" }
@@ -11,4 +11,5 @@ Pod::Spec.new do |s|
   s.source = { :git => "https://github.com/kerry/KGProgress.git", :tag => "#{s.version}" }
   s.source_files = "Sources/**/*.{swift,h,m}"
   s.requires_arc = true
+  s.swift_version = "5.0"
 end

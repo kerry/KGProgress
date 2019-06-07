@@ -64,7 +64,7 @@ extension KGProgress {
             blanketView = BlanketView(view: view,
                                       style: style)
             
-            guard let b = blanketView else {
+            guard blanketView != nil else {
                 return
             }
             
@@ -105,7 +105,7 @@ extension KGProgress {
             blanketView = BlanketView(view: view,
                                       style: style)
             
-            guard let b = blanketView else {
+            guard let _ = blanketView else {
                 return
             }
             
@@ -177,7 +177,7 @@ extension KGProgress {
             return
         }
         
-        cleanup(prop.dismissTimeInterval!, view: view) { Void in
+        cleanup(prop.dismissTimeInterval!, view: view) {
             completionHandler()
         }
     }
